@@ -110,8 +110,5 @@ venv.bak/
 *.sqlite
 *.sqlite3
 
-# MIGRATIONS
-migrations/
-
 # IDE directory
 .vscode/
