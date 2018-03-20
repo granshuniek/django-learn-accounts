@@ -15,9 +15,15 @@ class Genre(models.Model):
         return self.name
 
 class Language(models.Model):
-    language = models.CharField(max_length=200)
-
+    """
+    Model representing a Language (e.g. English, French, Japanese, etc.)
+    """
+    name = models.CharField(max_length=200, default='', help_text="Enter a the book's natural language (e.g. English, French, Japanese etc.)")
+    
     def __str__(self):
+        """
+        String for representing the Model object (in Admin site etc.)
+        """
         return self.name
 
 class Book(models.Model):
@@ -34,6 +40,7 @@ class Book(models.Model):
     # ManyToManyField used because genre can contain many books. Books can cover many genres.
     # Genre class has already been defined so we can specify the object above.
     language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
+
     def __str__(self):
         """
         String for representing the Model object.
@@ -46,6 +53,10 @@ class Book(models.Model):
         Returns the url to access a detail record for this book.
         """
         return reverse('book-detail', args=[str(self.id)])
+
+    def display_genre(self):
+        return ', '.join([genre.name for genre in self.genre.all()[:3]])
+    display_genre.short_description = 'Genre'
 
 class BookInstance(models.Model):
     """
