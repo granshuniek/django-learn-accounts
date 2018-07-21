@@ -112,6 +112,7 @@ venv.bak/
 
 # IDE directory
 .vscode/
+.idea/
 
 # migrations
 migrations/
