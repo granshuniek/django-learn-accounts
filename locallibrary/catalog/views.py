@@ -1,7 +1,10 @@
 import datetime
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
+from django.urls import reverse
 from django.views import generic
 
 from .forms import RenewBookForm
@@ -58,6 +61,7 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
 
+@permission_required('catalog.can_mark_returned')
 def renew_book_librarian(request, pk):
     book_inst = get_object_or_404(BookInstance, pk = pk)
 
@@ -67,7 +71,7 @@ def renew_book_librarian(request, pk):
             book_inst.due_back = form.cleaned_data['renewal_date']
             book_inst.save()
 
-            return HttpResponseRedirect(reverse('all-borowed'))
+            return HttpResponseRedirect(reverse('my-borrowed'))
     else:
         proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
         form = RenewBookForm(initial={'renewal_date': proposed_renewal_date,})
